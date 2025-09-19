@@ -1,11 +1,13 @@
 import time
 import random
+import machine
 
 import apps.thirdparty.com_kitki30_ruletta.drawer as drawer
 import apps.thirdparty.com_kitki30_ruletta.texts as texts
 
 import modules.io_manager as io_man
 import modules.menus as menus
+import modules.os_constants as osc
 
 import fonts.def_8x8 as f8x8
 
@@ -42,6 +44,8 @@ def play():
     
     tft.fill(0)
 
+    machine.freq(osc.ULTRA_FREQ)
+
     # Draw green circle
     drawer.fill_circle(tft, 160, 67, 70, 0x0324)
     # Roulette
@@ -57,40 +61,46 @@ def play():
         bet_text += "Black"
     tft.text(f8x8, bet_text, 0, 0, 65535)
 
+    time.sleep(2)
+
     # Random outcome
     sectors = 6
     target_sector = random.randint(0, sectors - 1)
     win = (bet == 1 and target_sector % 2 == 0) or (bet == 2 and target_sector % 2 == 1)
 
-    # Spin
-    total_steps = random.randint(80, 150)
+    full_turns = random.randint(15, 25)   # Full turns
+    total_steps = full_turns * sectors + target_sector  # Target steps
     current_sector = 0
     prev_sector = None
-    delay_base = 0.01
 
     for step in range(total_steps):
-        # Turn off last light
         if prev_sector is not None:
-            drawer.light_lamp(tft, lamps, prev_sector, 0x7BEF)  # gray
-
-        # Light up curr light
+            drawer.light_lamp(tft, lamps, prev_sector, 0x7BEF)
+        
+        # Light up lamp
         drawer.light_lamp(tft, lamps, current_sector % sectors)
-
         prev_sector = current_sector % sectors
 
-        # Smooth slowdown
+        # Speed curve
         fraction = step / total_steps
-        delay = delay_base + (fraction ** 3) * 0.12 + random.uniform(0, 0.005)
-        time.sleep(delay)
+        if fraction < 0.15:
+            delay = 0.02 - fraction * 0.12
+        elif fraction > 0.7:
+            f = (fraction - 0.7) / 0.3
+            delay = 0.005 + (f**2) * 0.12 + random.uniform(0, 0.003)
+        else:
+            delay = 0.005
 
+        time.sleep(delay)
         current_sector += 1
 
-    # Stop for result
+    # Light down all other, show result
     for i in range(sectors):
         drawer.light_lamp(tft, lamps, i, 0x7BEF)
     drawer.light_lamp(tft, lamps, target_sector)
 
-    # Message
+    # Random message
+    time.sleep(1)
     msg = random.choice(texts.WIN) if win else random.choice(texts.LOST)
-    tft.text(f8x8, msg, 0, 127, 65535)
-    time.sleep(3)
+    tft.text(f8x8, msg, 0, 127, 63788)
+    time.sleep(5)
