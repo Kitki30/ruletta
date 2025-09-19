@@ -1,5 +1,4 @@
-# Stick firmware v1 app template
+# Roulette for stick firmware
 
-Place your files in ``/app`` directory, edit manifest in ``/app/manifest.json``
-
-Build with ``/build.bat`` or just zip it without compression and change extension to ``.stk``
+> [!WARNING]
+> This is for fun game only, do not use for gambling purposes, do not gamble real money using our app! Author doesn't take any responsibility for any loses!
