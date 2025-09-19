@@ -1,10 +1,10 @@
 {
     "version": 1,
-    "app_ver": 2,
-    "name": "Test app",
+    "app_ver": 3,
+    "name": "Ruletta",
     "app_type": 0,
     "install_dependencies": false,
-    "description": "Test app, for handle_apps testing purposes",
+    "description": "Roulette for Stick firmware, 4fun only!",
     "entrypoint": "app",
-    "pack_id": "com.kitki30.test_app"
+    "pack_id": "com.kitki30.ruletta"
 }
