@@ -60,6 +60,8 @@ def play():
     else:
         bet_text += "Black"
     tft.text(f8x8, bet_text, 0, 0, 65535)
+    
+    random.seed(time.ticks_ms())
 
     time.sleep(2)
 
